@@ -6,11 +6,11 @@ import apriltag
 import cv2
 import numpy as np
 
-import src.image_transforms.imageTransforms as imageTransforms
-import src.multi_thread_data_processing.multiThreadDataProcessing as mtl
-from src.data_model.dataModel import Config
-from src.data_model.dataModel import FrameObject
-from src.data_model.dataModel import FrameObjectWithDetectedObjects
+import image_transforms.imageTransforms as imageTransforms
+import multi_thread_data_processing.multiThreadDataProcessing as mtl
+from data_model.dataModel import Config
+from data_model.dataModel import FrameObject
+from data_model.dataModel import FrameObjectWithDetectedObjects
 
 
 class CameraReader(mtl.GetParent):

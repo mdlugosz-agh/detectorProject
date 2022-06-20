@@ -7,11 +7,10 @@ import apriltag
 import cv2
 import numpy as np
 
-import src.multi_thread_data_processing.multiThreadDataProcessing as mtl
-from src.camera_io.cameraIO import Settings
-from src.data_model.dataModel import FrameObject
-from src.data_model.dataModel import FrameObjectWithDetectedObjects
-
+import multi_thread_data_processing.multiThreadDataProcessing as mtl
+# from camera_io.cameraIO import Settings
+from data_model.dataModel import FrameObject
+from data_model.dataModel import FrameObjectWithDetectedObjects
 
 class DetectObjectsTransform(mtl.OperationParent):
     def __init__(self, settings: Settings):
