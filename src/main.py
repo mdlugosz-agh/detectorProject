@@ -15,8 +15,7 @@ def main():
     data_display = mtl.DataSink(cameras.data_output, cameraIO.CameraDisplay("Video", cameras.camera_data))
     data_display.start()
     app.run()
-
-
+    
 def get_cameras():
     result = cameras.cameras_to_dict()
     return jsonify(result)
@@ -27,7 +26,7 @@ def get_cameras_rest():
     return get_cameras()
 
 
-@app.route('/cameras/activate', methods=['PUT'])
+@app.route('/cameras/activate', methods=['GET'])
 def stop_start_cameras_rest():
     index: str = request.args.get("index")
     active: str = request.args.get("active")
@@ -41,7 +40,7 @@ def stop_start_cameras_rest():
         return 'bad request!', 400
 
 
-@app.route('/cameras/create', methods=['POST'])
+@app.route('/cameras/create', methods=['GET'])
 def create_camera_rest():
     try:
         index: int = int(request.args.get("index"))
@@ -59,7 +58,7 @@ def create_camera_rest():
     return "camera {} created".format(index), 200
 
 
-@app.route('/cameras/update', methods=['PUT'])
+@app.route('/cameras/update', methods=['GET'])
 def update_camera_rest():
     try:
         index: int = int(request.args.get("index"))
@@ -112,3 +111,6 @@ def get_available_resolutions_rest():
 
 if __name__ == "__main__":
     main()
+
+
+# https://forum.opencv.org/t/camera-stops-working-after-about-an-hour-of-working/8098

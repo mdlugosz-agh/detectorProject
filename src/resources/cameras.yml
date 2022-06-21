@@ -1,0 +1,13 @@
+cam1:
+  index : 0
+  x     : 0
+  y     : 0
+  angle : 0
+  fps   : 20
+
+cam2:
+  index : 1
+  x     : 0
+  y     : 100
+  angle : 3.1415
+  fps   : 20
