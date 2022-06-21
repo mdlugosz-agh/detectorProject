@@ -15,5 +15,5 @@ objects:
 max_search_index: 10
 
 field_of_detection:
-  x: 900
-  y: 900
+  x: 800
+  y: 1300

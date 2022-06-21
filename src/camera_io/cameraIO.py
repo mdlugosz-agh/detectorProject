@@ -17,6 +17,10 @@ class CameraReader(mtl.GetParent):
     def __init__(self, camera_number: int):
         super(CameraReader, self).__init__()
         self.cap = cv2.VideoCapture(camera_number)
+        
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
         if not self.cap.isOpened():
             raise Exception("Couldn't open camera {}".format(camera_number))
         self.index: int = camera_number
