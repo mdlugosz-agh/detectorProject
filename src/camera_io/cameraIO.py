@@ -47,6 +47,7 @@ class CameraDisplay(mtl.SinkParent):
         self.camera_data = camera_data
         self.cameras = set()
         self.first_frames = {}
+        self.average_position = {}
 
     def sink_data(self, input_object: List[FrameObjectWithDetectedObjects]):
         frame_window = np.zeros((*self.window_size, 3))
@@ -89,6 +90,8 @@ class CameraDisplay(mtl.SinkParent):
                         rot = (rot + np.pi + rot_p)/2
                     else:
                         rot = (rot + rot_p) / 2
+
+                    rot = round(rot, 2)
                     x_1 = x_p - self.camera_data.get(camera_index)[0]
                     y_1 = y_p - self.camera_data.get(camera_index)[1]
                     cosine = np.cos(self.camera_data.get(camera_index)[2])
@@ -98,8 +101,10 @@ class CameraDisplay(mtl.SinkParent):
                         int(y_1*cosine - x_1*sine)), 5,
                                                                  (255, 0, 0), -1)
                     frames_to_display[camera_index] = cv2.putText(frames_to_display[camera_index],
-                                                                  "object: {}: rot: {}".format(object_index,
-                                                                                               str(rot_p - self.camera_data.get(camera_index)[2])), (
+                                                                  "obj: {}: rot: {} x:{} y:{}".format(object_index,
+                                                                                               str(round(rot_p - self.camera_data.get(camera_index)[2], 2)), 
+                                                                                               str(int(x_1*cosine + y_1*sine)), 
+                                                                                               str(int(y_1*cosine - x_1*sine))), (
                                                                       int(x_1*cosine + y_1*sine),
                                                                       int(y_1*cosine - x_1*sine + 15)),
                                                                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
@@ -113,18 +118,20 @@ class CameraDisplay(mtl.SinkParent):
                     x_1 = x - self.camera_data.get(camera_index)[0]
                     y_1 = y - self.camera_data.get(camera_index)[1]
                     frames_to_display[camera_index] = cv2.putText(frames_to_display[camera_index],
-                                                                  "object: {}: rot: {}".format(object_index, str(rot)),
+                                                                  "avg: {}: rot: {} x:{} y:{}".format(object_index, str(rot), str(int(x_1*cosine + y_1*sine)), str(int(y_1*cosine - x_1*sine))),
                                                                   (
                                                                       int(x_1*cosine + y_1*sine),
                                                                       int(y_1*cosine - x_1*sine)),
                                                                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
                     frames_to_display[camera_index] = cv2.circle(frames_to_display[camera_index], (
                         int(x_1*cosine + y_1*sine), int(y_1*cosine - x_1*sine)), 5, (0, 0, 255), -1)
+                self.average_position[object_index] = {'x': x, 'y': y, 'rot': rot}
                 cv2.putText(frame_window, "object: {}: rot: {}".format(object_index, str(rot)), (x, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                cv2.putText(frame_window, "x: {}, y: {}".format(x, y), (x + 83, y + 18),
+                cv2.putText(frame_window, "x: {}, y: {}".format(x, y), (x, y + 18),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
                 cv2.circle(frame_window, (x, y), 5, (0, 0, 255), -1)
+                
         for camera_index in self.cameras:
             cv2.imshow("Camera: {}".format(camera_index), frames_to_display[camera_index])
             x_cam = self.camera_data.get(camera_index)[0]

@@ -9,10 +9,10 @@ from data_model.dataModel import Config
 
 app = Flask(__name__)
 cameras = cameraIO.AllCameras()
-
+cameraDisplay = cameraIO.CameraDisplay("Video", cameras.camera_data)
 
 def main():
-    data_display = mtl.DataSink(cameras.data_output, cameraIO.CameraDisplay("Video", cameras.camera_data))
+    data_display = mtl.DataSink(cameras.data_output, cameraDisplay)
     data_display.start()
     app.run()
     
@@ -107,6 +107,26 @@ def get_available_resolutions_rest():
                 result[index] = cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
                 cap.release()
     return "available indexes and resolutions: {}".format(result), 200
+
+@app.route('/objects/pos', methods=['GET'])
+def get_all_objects_pos():
+    return jsonify(cameraDisplay.detected_objects_centers), 200
+
+@app.route('/object/pos_with_id', methods=['GET'])
+def get_object_pos():
+    try:
+        index: int = int(request.args.get("index"))
+    except:
+        return "wrong argument", 400
+    try:
+        position = cameraDisplay.average_position[index]
+    except:
+        return f"object {index} not detected", 500
+    try:
+        my_json = jsonify(position)
+    except:
+        return "could not jsonify", 400
+    return my_json, 200
 
 
 if __name__ == "__main__":
