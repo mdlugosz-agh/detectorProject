@@ -3,7 +3,7 @@ import yaml
 
 server_url = "http://localhost:5000"
 
-def main():
+def start():
     with open('resources/cameras.yml', 'r') as ymlfile:
         cameras_data = yaml.load(ymlfile, Loader=yaml.FullLoader)
     
@@ -26,7 +26,7 @@ def main():
             # Activate camera
             res = requests.get(server_url + "/cameras/activate", 
                 params={'index' : camera_data['index'], 'active' : 'true'})
-            print("Activate camera:{}".format(res.text));
+            print("Activate camera:{}".format(res.text))
 
 if __name__ == "__main__":
-    main()
+    start()

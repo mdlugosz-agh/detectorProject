@@ -2,10 +2,13 @@ from flask import Flask, jsonify, request
 
 import cv2
 import threading
+import time
 
 import camera_io.cameraIO as cameraIO
 import multi_thread_data_processing.multiThreadDataProcessing as mtl
 from data_model.dataModel import Config
+
+import init_cameras
 
 app = Flask(__name__)
 cameras = cameraIO.AllCameras()
@@ -14,12 +17,19 @@ cameraDisplay = cameraIO.CameraDisplay("Video", cameras.camera_data)
 def main():
     data_display = mtl.DataSink(cameras.data_output, cameraDisplay)
     data_display.start()
-    app.run()
-    
+    threading.Thread(target=app_run).start()
+    time.sleep(1)
+    threading.Thread(target=start_cameras).start()
+
+def app_run():
+    app.run(debug=False, threaded=True)
+
+def start_cameras():
+    init_cameras.start()
+
 def get_cameras():
     result = cameras.cameras_to_dict()
     return jsonify(result)
-
 
 @app.route('/cameras/get', methods=['GET'])
 def get_cameras_rest():
@@ -127,7 +137,6 @@ def get_object_pos():
     except:
         return "could not jsonify", 400
     return my_json, 200
-
 
 if __name__ == "__main__":
     main()
